@@ -1,23 +1,38 @@
 <!doctype html>
 <html>
   <head>
-    <script src="./bower_components/angular/angular.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+    <script src="./bower_components/angular/angular.js"></script>
     <script src="./bower_components/angular-file-model/angular-file-model.js"></script>
+    <script src="./bower_components/angular-file-model/angular-file-model.js"></script>
+    <script src="./bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
     <script src="./app.js"></script>
   </head>
   <body ng-app="tabular_json_edit">
     <div ng-controller="TableController as table_ctrl">
-      <input type="file" file-model="input_file">
+      <span class="btn btn-default btn-file">
+        Open File...<input type="file" file-model="input_file">
+      </span>
+      </label>
       <p>Input file is {{input_file.name}}</p>
-      <button ng-click="table_ctrl.lowercase_headers()">Lowercase</button>
-      <button ng-click="table_ctrl.uppercase_headers()">Uppercase</button>
-      <button ng-click="table_ctrl.spaces_to_underscores()">Spaces to Underscores</button>
+      <div class="btn-group" dropdown auto-close="outsideClick">
+        <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
+          Header Operations<span style="margin-left: 0.5em" class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="header-operations">
+          <li role="menuitem"><a ng-click="table_ctrl.lowercase_headers()">Lowercase</a></li>
+          <li role="menuitem"><a ng-click="table_ctrl.uppercase_headers()">Uppercase</a></li>
+          <li role="menuitem"><a ng-click="table_ctrl.spaces_to_underscores()">Spaces to Underscores</a></li>
+        </ul>
+      </div>
       <table>
         <thead>
           <tr>
             <td ng-repeat="header in table_ctrl.headers">
               <input ng-model="header"></input>
-              <button ng-click="table_ctrl.delete_field($index)">X</button>
+              <button class="btn btn-xs btn-danger glyphicon glyphicon-remove" ng-click="table_ctrl.delete_field($index)"></button>
             </td>
           </tr>
         </thead>

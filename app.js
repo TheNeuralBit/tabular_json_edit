@@ -16,12 +16,16 @@ function condition_data(tabular_json) {
 }
 
 (function() {
-  var app = angular.module('tabular_json_edit', ['file-model']);
+  var app = angular.module('tabular_json_edit', ['file-model', 'ui.bootstrap']);
 
   app.controller('TableController', ['$scope', '$http', function($scope, $http, $digest){
     var table_ctrl = this;
+    var status = {header_buttons_open: false};
     table_ctrl.headers = [];
     table_ctrl.data = [];
+      $scope.status = {
+    isopen: false
+  };
     $scope.input_file = null;
     $scope.$watch('input_file', function (new_file) {
       if (new_file)
