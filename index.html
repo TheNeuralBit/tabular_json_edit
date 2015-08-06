@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="/bower_components/angular/angular.min.js"></script>
+    <script src="/bower_components/angular-file-model/angular-file-model.js"></script>
+    <script src="/app.js"></script>
+  </head>
+  <body ng-app="tabular_json_edit">
+    <div ng-controller="TableController as table_ctrl">
+      <input type="file" file-model="input_file">
+      <p>Input file is {{input_file.name}}</p>
+      <button ng-click="table_ctrl.lowercase_headers()">Lowercase</button>
+      <button ng-click="table_ctrl.uppercase_headers()">Uppercase</button>
+      <button ng-click="table_ctrl.spaces_to_underscores()">Spaces to Underscores</button>
+      <table>
+        <thead>
+          <tr>
+            <td ng-repeat="header in table_ctrl.headers">
+              <input ng-model="header"></input>
+              <button ng-click="table_ctrl.delete_field($index)">X</button>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="row in table_ctrl.data">
+            <td ng-repeat="value in row track by $index">{{value}}</td>
+          </tr>
+        </tbody>
+      </table>
+    <div>
+  </body>
+</html>
