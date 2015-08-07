@@ -6,19 +6,35 @@ function values(my_object) {
   return rtrn
 }
 
-function condition_data(tabular_json) {
-  headers = Object.keys(tabular_json[0]);
-  data = [];
-  for (var i = 0; i < tabular_json.length; i++) {
-    data.push(values(tabular_json[i]));
-  }
-  return {headers: headers, data: data};
-}
 
 (function() {
   var app = angular.module('tabular_json_edit', ['file-model', 'ui.bootstrap']);
 
-  app.controller('TableController', ['$scope', '$http', function($scope, $http, $digest){
+  app.factory('JSONTableFactory', function() {
+    factory = {}
+
+    factory.load_data = function(tabular_json){
+      headers = Object.keys(tabular_json[0]);
+      data = [];
+      for (var i = 0; i < tabular_json.length; i++) {
+        data.push(values(tabular_json[i]));
+      }
+      return {headers: headers, data: data};
+    };
+
+    factory.load_file = function(the_file, callback){
+      reader = new FileReader();
+      reader.onload = function() {
+          obj = JSON.parse(reader.result)
+          callback(factory.load_data(obj));
+      };
+      reader.readAsText(the_file);
+    };
+
+    return factory;
+  });
+
+  app.controller('TableController', ['$scope', '$http', 'JSONTableFactory', function($scope, $http, JSONTableFactory){
     var table_ctrl = this;
     var status = {header_buttons_open: false};
     table_ctrl.headers = [];
@@ -27,26 +43,25 @@ function condition_data(tabular_json) {
     $scope.input_file = null;
     $scope.$watch('input_file', function (new_file) {
       if (new_file)
-        table_ctrl.load_file(new_file);
-    })
-    this.load_data = function(data){
-      result = condition_data(data);
-      table_ctrl.headers = result.headers;
-      table_ctrl.data = result.data;
-      table_ctrl.header_active = []
-      for (var i = 0; i < table_ctrl.headers.length; i++) {
-        table_ctrl.header_active.push(false);
-      }
-    };
-    this.load_file = function(the_file){
-      reader = new FileReader();
-      reader.onload = function() {
-        $scope.$apply(function() {
-          obj = JSON.parse(reader.result)
-          table_ctrl.load_data(obj);
+        JSONTableFactory.load_file(new_file, function(result) {
+          $scope.$apply(function() {
+            table_ctrl.headers = result.headers;
+            table_ctrl.data = result.data;
+            table_ctrl.header_active = []
+            for (var i = 0; i < table_ctrl.headers.length; i++) {
+              table_ctrl.header_active.push(false);
+            }
+          });
         });
-      };
-      reader.readAsText(the_file);
+    })
+
+    $scope.$watch('output_file', function (new_file) {
+      if (new_file)
+        table_ctrl.write_file(new_file);
+    })
+
+    this.write_file = function(the_file){
+      write = new FileWriter();
     };
 
     // Functions for modifying headers
@@ -57,19 +72,13 @@ function condition_data(tabular_json) {
     };
 
     this.lowercase_headers = 
-      header_modifier_factory(function(item){
-        return item.toLowerCase()
-      });
+      header_modifier_factory(function(item){ return item.toLowerCase() });
 
     this.uppercase_headers =
-      header_modifier_factory(function(item){
-        return item.toUpperCase()
-      });
+      header_modifier_factory(function(item){ return item.toUpperCase() });
 
     this.spaces_to_underscores =
-      header_modifier_factory(function(item){
-        return item.replace(/\s+/g, '_');
-      });
+      header_modifier_factory(function(item){ return item.replace(/\s+/g, '_'); });
 
     // Functions for modifying data
     this.convert_all_money_values = function() {
@@ -90,60 +99,6 @@ function condition_data(tabular_json) {
       };
     };
   }]);
-
-  /*app.directive("productDescription", function() {
-    return {
-      restrict: 'E',
-      templateUrl: "product-description.html"
-    };
-  });
-
-  app.directive("productReviews", function() {
-    return {
-      restrict: 'E',
-      templateUrl: "product-reviews.html"
-    };
-  });
-
-  app.directive("productSpecs", function() {
-    return {
-      restrict:"A",
-      templateUrl: "product-specs.html"
-    };
-  });
-
-  app.directive("productTabs", function() {
-    return {
-      restrict: "E",
-      templateUrl: "product-tabs.html",
-      controller: function() {
-        this.tab = 1;
-
-        this.isSet = function(checkTab) {
-          return this.tab === checkTab;
-        };
-
-        this.setTab = function(activeTab) {
-          this.tab = activeTab;
-        };
-      },
-      controllerAs: "tab"
-    };
-  });
-
-  app.directive("productGallery", function() {
-    return {
-      restrict: "E",
-      templateUrl: "product-gallery.html",
-      controller: function() {
-        this.current = 0;
-        this.setCurrent = function(imageNumber){
-          this.current = imageNumber || 0;
-        };
-      },
-      controllerAs: "gallery"
-    };
-  });*/
 
 })();
 
