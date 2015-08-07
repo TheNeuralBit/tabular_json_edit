@@ -42,15 +42,14 @@ function condition_data(tabular_json) {
       reader = new FileReader();
       reader.onload = function() {
         $scope.$apply(function() {
-	  obj = JSON.parse(reader.result)
-          console.log(reader.result);
-          console.log(obj);
+          obj = JSON.parse(reader.result)
           table_ctrl.load_data(obj);
         });
       };
       reader.readAsText(the_file);
     };
 
+    // Functions for modifying headers
     header_modifier_factory = function(map_func){
       return function() {
         table_ctrl.headers = table_ctrl.headers.map(map_func);
@@ -71,6 +70,18 @@ function condition_data(tabular_json) {
       header_modifier_factory(function(item){
         return item.replace(/\s+/g, '_');
       });
+
+    // Functions for modifying data
+    this.convert_all_money_values = function() {
+      for (var row_idx = 0; row_idx < table_ctrl.data.length; row_idx++) {
+        var this_row = table_ctrl.data[row_idx];
+        for (var col_idx = 0; col_idx < this_row.length; col_idx++) {
+          if (is_money(this_row[col_idx])) {
+            this_row[col_idx] = convert_money(this_row[col_idx]);
+          }
+        }
+      }
+    }
 
     this.delete_field = function(idx){
       table_ctrl.headers.splice(idx, 1);
@@ -135,3 +146,12 @@ function condition_data(tabular_json) {
   });*/
 
 })();
+
+function is_money(value) {
+  if (typeof value != "string") return false;
+  return /^\$[\d,\.]+$/.test(value);
+}
+
+function convert_money(money_value) {
+  return parseFloat(money_value.replace(/[\$,]/g, ''));
+}

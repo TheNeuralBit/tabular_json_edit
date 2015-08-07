@@ -16,6 +16,7 @@
         Open File...<input type="file" file-model="input_file">
       </span>
       </label>
+      <!-- Header Operations Dropdown -->
       <div class="btn-group" dropdown auto-close="outsideClick">
         <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
           Header Operations<span style="margin-left: 0.5em" class="caret"></span>
@@ -26,6 +27,18 @@
           <li role="menuitem"><a ng-click="table_ctrl.spaces_to_underscores()">Spaces to Underscores</a></li>
         </ul>
       </div>
+
+      <!-- Data Operations Dropdown -->
+      <div class="btn-group" dropdown auto-close="outsideClick">
+        <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
+          Data Operations<span style="margin-left: 0.5em" class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="header-operations">
+          <li role="menuitem"><a ng-click="table_ctrl.convert_all_money_values()">Convert $ Values</a></li>
+        </ul>
+      </div>
+
+      <!-- The Table -->
       <table>
         <thead>
           <tr>
