@@ -12,37 +12,48 @@
   </head>
   <body ng-app="tabular_json_edit">
     <div ng-controller="TableController as table_ctrl">
-      <span class="btn btn-default btn-file">
-        Open File...<input type="file" file-model="input_file">
-      </span>
-      </label>
-      <!-- Header Operations Dropdown -->
-      <div class="btn-group" dropdown auto-close="outsideClick">
-        <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
-          Header Operations<span style="margin-left: 0.5em" class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="header-operations">
-          <li role="menuitem"><a ng-click="table_ctrl.lowercase_headers()">Lowercase</a></li>
-          <li role="menuitem"><a ng-click="table_ctrl.uppercase_headers()">Uppercase</a></li>
-          <li role="menuitem"><a ng-click="table_ctrl.spaces_to_underscores()">Spaces to Underscores</a></li>
-        </ul>
-      </div>
+      <!-- All controls -->
+      <div id="controls">
+        <span class="btn btn-default btn-file">
+          Open File...<input type="file" file-model="input_file">
+        </span>
+        </label>
 
-      <!-- Data Operations Dropdown -->
-      <div class="btn-group" dropdown auto-close="outsideClick">
-        <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
-          Data Operations<span style="margin-left: 0.5em" class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="header-operations">
-          <li role="menuitem"><a ng-click="table_ctrl.convert_all_money_values()">Convert $ Values</a></li>
-        </ul>
+        <span class="btn btn-default btn-file">
+          Save File...<input type="file" file-model="output_file">
+        </span>
+        </label>
+
+        <!-- Header Operations Dropdown -->
+        <div class="btn-group" dropdown auto-close="outsideClick">
+          <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
+            Header Operations<span style="margin-left: 0.5em" class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="header-operations">
+            <li role="menuitem"><a ng-click="table_ctrl.lowercase_headers()">Lowercase</a></li>
+            <li role="menuitem"><a ng-click="table_ctrl.uppercase_headers()">Uppercase</a></li>
+            <li role="menuitem"><a ng-click="table_ctrl.spaces_to_underscores()">Spaces to Underscores</a></li>
+          </ul>
+        </div>
+
+        <!-- Data Operations Dropdown -->
+        <div class="btn-group" dropdown auto-close="outsideClick">
+          <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
+            Data Operations<span style="margin-left: 0.5em" class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="header-operations">
+            <li role="menuitem"><a ng-click="table_ctrl.convert_all_money_values()">Convert $ Values</a></li>
+          </ul>
+        </div>
       </div>
 
       <!-- The Table -->
       <table>
         <thead>
           <tr>
-            <td ng-repeat="header in table_ctrl.headers" style="position:relative" ng-mouseenter="table_ctrl.header_active[$index] = true" ng-mouseleave="table_ctrl.header_active[$index] = false">
+            <td ng-repeat="header in table_ctrl.headers" style="position:relative" 
+                ng-mouseenter="table_ctrl.header_active[$index] = true" 
+                ng-mouseleave="table_ctrl.header_active[$index] = false">
               <input ng-model="header"></input>
               <button style="position: absolute; top: 0px; right: 0px; height: 25px; width: 25px;" class="btn btn-xs btn-danger glyphicon glyphicon-remove" ng-click="table_ctrl.delete_field($index)" ng-show="table_ctrl.header_active[$index]"></button>
             </td>
