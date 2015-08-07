@@ -11,7 +11,7 @@ function values(my_object) {
   var app = angular.module('tabular_json_edit', ['file-model', 'ui.bootstrap']);
 
   app.factory('JSONTableFactory', function() {
-    factory = {}
+    var factory = {};
 
     factory.load_data = function(tabular_json){
       headers = Object.keys(tabular_json[0]);
@@ -34,7 +34,20 @@ function values(my_object) {
     return factory;
   });
 
-  app.controller('TableController', ['$scope', '$http', 'JSONTableFactory', function($scope, $http, JSONTableFactory){
+  app.factory('MoneyFactory', function(){
+    var factory = {};
+    factory.is_money = function(value) {
+      if (typeof value != "string") return false;
+      return /^\$[\d,\.]+$/.test(value);
+    }
+
+    factory.convert_money = function(money_value) {
+      return parseFloat(money_value.replace(/[\$,]/g, ''));
+    }
+    return factory
+  });
+
+  app.controller('TableController', ['$scope', '$http', 'JSONTableFactory', 'MoneyFactory', function($scope, $http, JSONTableFactory, MoneyFactory){
     var table_ctrl = this;
     var status = {header_buttons_open: false};
     table_ctrl.headers = [];
@@ -43,6 +56,7 @@ function values(my_object) {
     $scope.input_file = null;
     $scope.$watch('input_file', function (new_file) {
       if (new_file)
+      {
         JSONTableFactory.load_file(new_file, function(result) {
           $scope.$apply(function() {
             table_ctrl.headers = result.headers;
@@ -53,6 +67,7 @@ function values(my_object) {
             }
           });
         });
+      }
     })
 
     $scope.$watch('output_file', function (new_file) {
@@ -85,8 +100,8 @@ function values(my_object) {
       for (var row_idx = 0; row_idx < table_ctrl.data.length; row_idx++) {
         var this_row = table_ctrl.data[row_idx];
         for (var col_idx = 0; col_idx < this_row.length; col_idx++) {
-          if (is_money(this_row[col_idx])) {
-            this_row[col_idx] = convert_money(this_row[col_idx]);
+          if (MoneyFactory.is_money(this_row[col_idx])) {
+            this_row[col_idx] = MoneyFactory.convert_money(this_row[col_idx]);
           }
         }
       }
@@ -99,14 +114,4 @@ function values(my_object) {
       };
     };
   }]);
-
 })();
-
-function is_money(value) {
-  if (typeof value != "string") return false;
-  return /^\$[\d,\.]+$/.test(value);
-}
-
-function convert_money(money_value) {
-  return parseFloat(money_value.replace(/[\$,]/g, ''));
-}
