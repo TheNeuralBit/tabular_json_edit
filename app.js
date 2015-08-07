@@ -23,9 +23,7 @@ function condition_data(tabular_json) {
     var status = {header_buttons_open: false};
     table_ctrl.headers = [];
     table_ctrl.data = [];
-      $scope.status = {
-    isopen: false
-  };
+    table_ctrl.header_active = [];
     $scope.input_file = null;
     $scope.$watch('input_file', function (new_file) {
       if (new_file)
@@ -35,6 +33,10 @@ function condition_data(tabular_json) {
       result = condition_data(data);
       table_ctrl.headers = result.headers;
       table_ctrl.data = result.data;
+      table_ctrl.header_active = []
+      for (var i = 0; i < table_ctrl.headers.length; i++) {
+        table_ctrl.header_active.push(false);
+      }
     };
     this.load_file = function(the_file){
       reader = new FileReader();

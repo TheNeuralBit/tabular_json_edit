@@ -16,7 +16,6 @@
         Open File...<input type="file" file-model="input_file">
       </span>
       </label>
-      <p>Input file is {{input_file.name}}</p>
       <div class="btn-group" dropdown auto-close="outsideClick">
         <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
           Header Operations<span style="margin-left: 0.5em" class="caret"></span>
@@ -30,9 +29,9 @@
       <table>
         <thead>
           <tr>
-            <td ng-repeat="header in table_ctrl.headers">
+            <td ng-repeat="header in table_ctrl.headers" style="position:relative" ng-mouseenter="table_ctrl.header_active[$index] = true" ng-mouseleave="table_ctrl.header_active[$index] = false">
               <input ng-model="header"></input>
-              <button class="btn btn-xs btn-danger glyphicon glyphicon-remove" ng-click="table_ctrl.delete_field($index)"></button>
+              <button style="position: absolute; top: 0px; right: 0px; height: 25px; width: 25px;" class="btn btn-xs btn-danger glyphicon glyphicon-remove" ng-click="table_ctrl.delete_field($index)" ng-show="table_ctrl.header_active[$index]"></button>
             </td>
           </tr>
         </thead>
