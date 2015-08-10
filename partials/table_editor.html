@@ -34,10 +34,10 @@
   <table>
     <thead>
       <tr>
-        <td ng-repeat="header in data.headers" style="position:relative" 
+        <td ng-repeat="header in data.headers track by $index" style="position:relative" 
             ng-mouseenter="table_ctrl.header_active[$index] = true" 
             ng-mouseleave="table_ctrl.header_active[$index] = false">
-          <input ng-model="header"></input>
+          <input ng-model="data.headers[$index]"></input>
           <button style="position: absolute; top: 0px; right: 0px; height: 25px; width: 25px;" class="btn btn-xs btn-danger glyphicon glyphicon-remove" ng-click="table_ctrl.delete_field($index)" ng-show="table_ctrl.header_active[$index]"></button>
         </td>
       </tr>
