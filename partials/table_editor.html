@@ -1,4 +1,6 @@
 <div>
+  <a href="#/output">View Output</a>
+  <br/>
   <!-- All controls -->
   <div id="controls">
     <file-selector fs-model="input_file">Open File...</file-selector>
@@ -35,7 +37,7 @@
   <table>
     <thead>
       <tr>
-        <td ng-repeat="header in table_ctrl.headers" style="position:relative" 
+        <td ng-repeat="header in data.headers" style="position:relative" 
             ng-mouseenter="table_ctrl.header_active[$index] = true" 
             ng-mouseleave="table_ctrl.header_active[$index] = false">
           <input ng-model="header"></input>
@@ -44,7 +46,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="row in table_ctrl.data">
+      <tr ng-repeat="row in data.data">
         <td ng-repeat="value in row track by $index">{{value}}</td>
       </tr>
     </tbody>

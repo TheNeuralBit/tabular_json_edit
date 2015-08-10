@@ -19,15 +19,21 @@ function values(my_object) {
       }).
       when('/output', {
         templateUrl: 'partials/json_viewer.html',
-        controller: 'TableController'
+        controller: 'TableController',
+        controllerAs: 'table_ctrl'
       }).
       otherwise({
         redirectTo: '/'
       });
   }]);
 
-  app.factory('JSONTableFactory', function() {
-    var factory = {};
+
+  app.factory('JSONTableService', function() {
+    factory = {};
+    factory.data = {
+      headers: [],
+      data: []
+    };
 
     factory.load_data = function(tabular_json){
       headers = Object.keys(tabular_json[0]);
@@ -35,7 +41,8 @@ function values(my_object) {
       for (var i = 0; i < tabular_json.length; i++) {
         data.push(values(tabular_json[i]));
       }
-      return {headers: headers, data: data};
+      factory.data.headers = headers;
+      factory.data.data = data;
     };
 
     factory.load_file = function(the_file, callback){
@@ -45,6 +52,18 @@ function values(my_object) {
           callback(factory.load_data(obj));
       };
       reader.readAsText(the_file);
+    };
+
+    factory.convert_to_json = function() {
+      rtrn = [];
+      for (var row = 0; row < factory.data.data.length; row++) {
+        curr_obj = {};
+        for (var col = 0; col < factory.data.headers.length; col++) {
+          curr_obj[factory.data.headers[col]] = factory.data.data[col];
+        }
+        rtrn.push(curr_obj)
+      }
+      return rtrn;
     };
 
     return factory;
@@ -63,22 +82,19 @@ function values(my_object) {
     return factory
   });
 
-  app.controller('TableController', ['$scope', '$http', 'JSONTableFactory', 'MoneyFactory', function($scope, $http, JSONTableFactory, MoneyFactory){
+  app.controller('TableController', ['$scope', '$http', 'JSONTableService', 'MoneyFactory', function($scope, $http, JSONTableService, MoneyFactory){
     var table_ctrl = this;
     var status = {header_buttons_open: false};
-    table_ctrl.headers = [];
-    table_ctrl.data = [];
+    $scope.data = JSONTableService.data;
     table_ctrl.header_active = [];
     $scope.input_file = null;
     $scope.$watch('input_file', function (new_file) {
       if (new_file)
       {
-        JSONTableFactory.load_file(new_file, function(result) {
+        JSONTableService.load_file(new_file, function(result) {
           $scope.$apply(function() {
-            table_ctrl.headers = result.headers;
-            table_ctrl.data = result.data;
             table_ctrl.header_active = []
-            for (var i = 0; i < table_ctrl.headers.length; i++) {
+            for (var i = 0; i < JSONTableService.data.headers.length; i++) {
               table_ctrl.header_active.push(false);
             }
           });
@@ -98,7 +114,7 @@ function values(my_object) {
     // Functions for modifying headers
     header_modifier_factory = function(map_func){
       return function() {
-        table_ctrl.headers = table_ctrl.headers.map(map_func);
+        JSONTableService.data.headers = JSONTableService.data.headers.map(map_func);
       };
     };
 
@@ -113,8 +129,8 @@ function values(my_object) {
 
     // Functions for modifying data
     this.convert_all_money_values = function() {
-      for (var row_idx = 0; row_idx < table_ctrl.data.length; row_idx++) {
-        var this_row = table_ctrl.data[row_idx];
+      for (var row_idx = 0; row_idx < JSONTableService.data.data.length; row_idx++) {
+        var this_row = JSONTableService.data.data[row_idx];
         for (var col_idx = 0; col_idx < this_row.length; col_idx++) {
           if (MoneyFactory.is_money(this_row[col_idx])) {
             this_row[col_idx] = MoneyFactory.convert_money(this_row[col_idx]);
@@ -124,10 +140,11 @@ function values(my_object) {
     }
 
     this.delete_field = function(idx){
-      table_ctrl.headers.splice(idx, 1);
+      JSONTableService.data.headers.splice(idx, 1);
       for (var i = 0; i < table_ctrl.data.length; i++) {
-        table_ctrl.data[i].splice(idx, 1);
+        JSONTableService.data.data[i].splice(idx, 1);
       };
     };
+    this.data_as_json = function() { return JSONTableService.convert_to_json(); };
   }]);
 })();
