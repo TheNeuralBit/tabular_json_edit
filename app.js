@@ -152,6 +152,6 @@ function values(my_object) {
         JSONTableService.data.data[i].splice(idx, 1);
       };
     };
-    this.data_as_json = function() { return JSONTableService.convert_to_json(); };
+    this.data_as_json = function() { return JSON.stringify(JSONTableService.convert_to_json()); };
   }]);
 })();
