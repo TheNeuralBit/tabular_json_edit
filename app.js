@@ -59,7 +59,7 @@ function values(my_object) {
       for (var row = 0; row < factory.data.data.length; row++) {
         curr_obj = {};
         for (var col = 0; col < factory.data.headers.length; col++) {
-          curr_obj[factory.data.headers[col]] = factory.data.data[col];
+          curr_obj[factory.data.headers[col]] = factory.data.data[row][col];
         }
         rtrn.push(curr_obj)
       }
