@@ -1,7 +1,7 @@
 function values(my_object) {
   rtrn = []
   for(var key in my_object) {
-      rtrn.push(my_object[key]);
+    rtrn.push(my_object[key]);
   }
   return rtrn
 }
@@ -114,7 +114,7 @@ function values(my_object) {
     // Functions for modifying headers
     header_modifier_factory = function(map_func){
       return function() {
-        JSONTableService.data.headers = JSONTableService.data.headers.map(map_func);
+        JSONTableService.data.headers = $scope.data.headers.map(map_func);
       };
     };
 
@@ -128,16 +128,23 @@ function values(my_object) {
       header_modifier_factory(function(item){ return item.replace(/\s+/g, '_'); });
 
     // Functions for modifying data
-    this.convert_all_money_values = function() {
-      for (var row_idx = 0; row_idx < JSONTableService.data.data.length; row_idx++) {
-        var this_row = JSONTableService.data.data[row_idx];
-        for (var col_idx = 0; col_idx < this_row.length; col_idx++) {
-          if (MoneyFactory.is_money(this_row[col_idx])) {
-            this_row[col_idx] = MoneyFactory.convert_money(this_row[col_idx]);
+    data_modifier_factory = function(condition_func, convert_func) {
+      return function() {
+        for (var row_idx = 0; row_idx < $scope.data.data.length; row_idx++) {
+          var this_row = $scope.data.data[row_idx];
+          for (var col_idx = 0; col_idx < this_row.length; col_idx++) {
+            if (condition_func(this_row[col_idx])) {
+              this_row[col_idx] = convert_func(this_row[col_idx]);
+            }
           }
         }
-      }
-    }
+      };
+    };
+
+    this.convert_all_money_values = data_modifier_factory(MoneyFactory.is_money, MoneyFactory.convert_money);
+    this.empty_string_to_null = data_modifier_factory(
+      function(value) {return value == "";},
+      function() {return null;});
 
     this.delete_field = function(idx){
       JSONTableService.data.headers.splice(idx, 1);
