@@ -8,7 +8,23 @@ function values(my_object) {
 
 
 (function() {
-  var app = angular.module('tabular_json_edit', ['file-model', 'ui.bootstrap']);
+  var app = angular.module('tabular_json_edit', ['file-selector', 'ui.bootstrap', 'ngRoute']);
+
+  app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+      when('/', {
+        templateUrl: 'partials/table_editor.html',
+        controller: 'TableController',
+        controllerAs: 'table_ctrl'
+      }).
+      when('/output', {
+        templateUrl: 'partials/json_viewer.html',
+        controller: 'TableController'
+      }).
+      otherwise({
+        redirectTo: '/'
+      });
+  }]);
 
   app.factory('JSONTableFactory', function() {
     var factory = {};

@@ -1,0 +1,52 @@
+<div>
+  <!-- All controls -->
+  <div id="controls">
+    <file-selector fs-model="input_file">Open File...</file-selector>
+    <!--<file-selector filemodel="output_file">Save File...</file-selector>-->
+
+    <!-- Header Operations Dropdown -->
+    <div class="btn-group" dropdown auto-close="outsideClick">
+      <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
+        Header Operations<span style="margin-left: 0.5em" class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="header-operations">
+        <li role="menuitem"><a ng-click="table_ctrl.lowercase_headers()">Lowercase</a></li>
+        <li role="menuitem"><a ng-click="table_ctrl.uppercase_headers()">Uppercase</a></li>
+        <li role="menuitem"><a ng-click="table_ctrl.spaces_to_underscores()">Spaces to Underscores</a></li>
+      </ul>
+    </div>
+
+    <!-- Data Operations Dropdown -->
+    <div class="btn-group" dropdown auto-close="outsideClick">
+      <button id="header-operations" type="button" class="btn btn-primary" dropdown-toggle>
+        Data Operations<span style="margin-left: 0.5em" class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="header-operations">
+        <li role="menuitem"><a ng-click="table_ctrl.convert_all_money_values()">Convert $ Values</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <br/>
+  <p>Input file is: {{input_file.name}}</p>
+  <br/>
+
+  <!-- The Table -->
+  <table>
+    <thead>
+      <tr>
+        <td ng-repeat="header in table_ctrl.headers" style="position:relative" 
+            ng-mouseenter="table_ctrl.header_active[$index] = true" 
+            ng-mouseleave="table_ctrl.header_active[$index] = false">
+          <input ng-model="header"></input>
+          <button style="position: absolute; top: 0px; right: 0px; height: 25px; width: 25px;" class="btn btn-xs btn-danger glyphicon glyphicon-remove" ng-click="table_ctrl.delete_field($index)" ng-show="table_ctrl.header_active[$index]"></button>
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in table_ctrl.data">
+        <td ng-repeat="value in row track by $index">{{value}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
